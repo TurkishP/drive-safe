@@ -436,7 +436,7 @@ export default function HomePage() {
               </p>
               <h1
                 className={`display-font mt-2 font-semibold leading-none text-pine ${
-                  language === "ko" ? "text-[2.4rem]" : "text-4xl"
+                  language === "ko" ? "text-[2.15rem]" : "text-4xl"
                 }`}
               >
                 {copy.appTitle}

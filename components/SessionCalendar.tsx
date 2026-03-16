@@ -49,17 +49,17 @@ export default function SessionCalendar({
   return (
     <section className="panel rounded-[1.75rem] p-4">
       <button
-        className="flex w-full items-center justify-between gap-3 rounded-[1.4rem] bg-white/65 px-4 py-4 text-left transition hover:bg-white/85"
+        className="flex w-full items-center justify-between gap-3 rounded-[1.4rem] bg-white/65 px-4 py-3 text-left transition hover:bg-white/85"
         onClick={() => setIsOpen((currentValue) => !currentValue)}
         type="button"
       >
         <div>
-          <h2 className="display-font text-2xl font-semibold text-ink">
+          <h2 className="display-font text-xl font-semibold text-ink">
             {copy.title}
           </h2>
         </div>
 
-        <span className="inline-flex items-center gap-2 rounded-full border border-pine/15 bg-white/90 px-4 py-3 text-sm font-semibold text-pine">
+        <span className="inline-flex items-center gap-2 rounded-full border border-pine/15 bg-white/90 px-3 py-2 text-sm font-semibold text-pine">
           <svg
             aria-hidden="true"
             className={`h-5 w-5 transition-transform ${isOpen ? "rotate-180" : ""}`}
