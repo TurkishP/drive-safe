@@ -21,6 +21,8 @@ export const appCopy = {
     languageToggle: "언어 변경",
     sessionBrowser: {
       title: "날짜 보기",
+      show: "이전 주 펼치기",
+      hide: "이전 주 접기",
       monthLabel: "월 선택",
       sundayLabel: "주일",
       currentBadge: "이번 주",
@@ -106,6 +108,8 @@ export const appCopy = {
     languageToggle: "Change language",
     sessionBrowser: {
       title: "Browse dates",
+      show: "Show previous weeks",
+      hide: "Hide previous weeks",
       monthLabel: "Month",
       sundayLabel: "Sunday",
       currentBadge: "Current",
