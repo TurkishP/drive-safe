@@ -57,7 +57,8 @@ export default function GroupDetailModal({
     return null;
   }
 
-  const isCurrentGroup = membershipGroupId === group.id;
+  const groupId = group.id;
+  const isCurrentGroup = membershipGroupId === groupId;
   const hasMembership = Boolean(membershipGroupId);
   const primaryLabel = isCurrentGroup
     ? "Leave group"
@@ -71,7 +72,7 @@ export default function GroupDetailModal({
       return;
     }
 
-    await onJoin(group.id);
+    await onJoin(groupId);
   }
 
   return (
