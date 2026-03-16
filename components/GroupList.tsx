@@ -119,18 +119,18 @@ export default function GroupList({
                 {group.name || copy.fallbackName}
               </h3>
 
-              <p className="mt-2 flex items-baseline gap-2 text-base">
-                <span className="inline-block w-20 shrink-0 text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">
+              <p className="mt-2 flex items-baseline gap-3 text-base">
+                <span className="inline-block w-24 shrink-0 text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">
                   {copy.menu}
                 </span>
-                <span className="font-medium text-slate-800">{group.menu}</span>
+                <span className="min-w-0 flex-1 font-medium text-slate-800">{group.menu}</span>
               </p>
               {group.location ? (
-                <p className="mt-1 flex items-baseline gap-2 text-base">
-                  <span className="inline-block w-20 shrink-0 text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">
+                <p className="mt-1 flex items-baseline gap-3 text-base">
+                  <span className="inline-block w-24 shrink-0 text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">
                     {copy.location}
                   </span>
-                  <span className="font-medium text-slate-800">{group.location}</span>
+                  <span className="min-w-0 flex-1 font-medium text-slate-800">{group.location}</span>
                 </p>
               ) : null}
             </button>

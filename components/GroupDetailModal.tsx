@@ -144,18 +144,18 @@ export default function GroupDetailModal({
     >
       <div className="space-y-5">
         <div className="rounded-[1.5rem] bg-gradient-to-br from-pine to-moss p-5 text-white">
-          <p className="mt-1 flex items-baseline gap-2 text-2xl font-semibold">
-            <span className="inline-block w-20 shrink-0 text-sm font-semibold uppercase tracking-[0.22em] text-white/75">
+          <p className="mt-1 flex items-baseline gap-3 text-2xl font-semibold">
+            <span className="inline-block w-24 shrink-0 text-sm font-semibold uppercase tracking-[0.22em] text-white/75">
               {copy.menuLabel}
             </span>
-            <span>{group.menu}</span>
+            <span className="min-w-0 flex-1">{group.menu}</span>
           </p>
           {group.location ? (
-            <p className="mt-3 flex items-baseline gap-2 text-base text-white/90">
-              <span className="inline-block w-20 shrink-0 text-sm font-semibold uppercase tracking-[0.22em] text-white/75">
+            <p className="mt-3 flex items-baseline gap-3 text-base text-white/90">
+              <span className="inline-block w-24 shrink-0 text-sm font-semibold uppercase tracking-[0.22em] text-white/75">
                 {copy.locationLabel}
               </span>
-              <span>{group.location}</span>
+              <span className="min-w-0 flex-1">{group.location}</span>
             </p>
           ) : null}
           <p className="mt-3 text-sm text-white/80">
