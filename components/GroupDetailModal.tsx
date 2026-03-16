@@ -212,7 +212,7 @@ export default function GroupDetailModal({
         </div>
 
         {canEdit ? (
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3">
             <button
               className="rounded-[1.4rem] bg-pine px-4 py-4 text-base font-semibold text-white transition hover:bg-pine/90 disabled:cursor-not-allowed disabled:bg-pine/50"
               disabled={isBusy}
@@ -222,20 +222,9 @@ export default function GroupDetailModal({
               {isBusy ? copy.working : primaryLabel}
             </button>
 
-            {!isCurrentGroup && membershipGroupId ? (
-              <button
-                className="rounded-[1.4rem] border border-pine/15 bg-white/80 px-4 py-4 text-base font-semibold text-pine transition hover:bg-pine/5 disabled:cursor-not-allowed disabled:opacity-60"
-                disabled={isBusy}
-                onClick={onLeave}
-                type="button"
-              >
-                {copy.leaveCurrentGroup}
-              </button>
-            ) : null}
-
             {canDelete ? (
               <button
-                className="rounded-[1.4rem] border border-red-200 bg-red-50 px-4 py-4 text-base font-semibold text-red-700 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-60 sm:col-span-2"
+                className="rounded-[1.4rem] border border-red-200 bg-red-50 px-4 py-4 text-base font-semibold text-red-700 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-60"
                 disabled={isBusy}
                 onClick={handleDelete}
                 type="button"
@@ -246,7 +235,7 @@ export default function GroupDetailModal({
 
             {canEditLocation ? (
               <button
-                className="rounded-[1.4rem] border border-pine/15 bg-white/80 px-4 py-4 text-base font-semibold text-pine transition hover:bg-pine/5 disabled:cursor-not-allowed disabled:opacity-60 sm:col-span-2"
+                className="rounded-[1.4rem] border border-pine/15 bg-white/80 px-4 py-4 text-base font-semibold text-pine transition hover:bg-pine/5 disabled:cursor-not-allowed disabled:opacity-60"
                 disabled={isBusy}
                 onClick={handleEditLocation}
                 type="button"
