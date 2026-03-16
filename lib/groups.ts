@@ -2,9 +2,12 @@
 
 import {
   collection,
+  getDocs,
   doc,
   onSnapshot,
+  query,
   serverTimestamp,
+  where,
   writeBatch
 } from "firebase/firestore";
 import {
@@ -112,4 +115,20 @@ export async function createGroup({
 
   await batch.commit();
   return groupRef.id;
+}
+
+export async function deleteGroup(sessionId: string, groupId: string) {
+  const db = getFirebaseDb();
+  const membershipsRef = collection(db, "sessions", sessionId, "memberships");
+  const membershipsSnapshot = await getDocs(
+    query(membershipsRef, where("groupId", "==", groupId))
+  );
+  const batch = writeBatch(db);
+
+  membershipsSnapshot.forEach((membershipDoc) => {
+    batch.delete(membershipDoc.ref);
+  });
+
+  batch.delete(doc(db, "sessions", sessionId, "groups", groupId));
+  await batch.commit();
 }

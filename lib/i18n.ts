@@ -61,7 +61,8 @@ export const appCopy = {
       myGroup: "내 모임",
       createdBy: "만든 사람",
       link: "링크",
-      photo: "사진"
+      photo: "사진",
+      delete: "삭제"
     },
     detailModal: {
       menuLabel: "메뉴",
@@ -72,6 +73,8 @@ export const appCopy = {
       moveToGroup: "이 모임으로 이동",
       joinGroup: "모임 참여하기",
       leaveCurrentGroup: "현재 모임 나가기",
+      deleteGroup: "모임 삭제",
+      deleteConfirm: "이 모임을 삭제할까요? 참여자 목록도 함께 지워집니다.",
       working: "처리 중...",
       archiveNotice: "지난 세션은 읽기 전용입니다. 현재 주일 세션에서만 참여를 바꿀 수 있습니다."
     },
@@ -149,7 +152,8 @@ export const appCopy = {
       myGroup: "My group",
       createdBy: "Created by",
       link: "Link",
-      photo: "Photo"
+      photo: "Photo",
+      delete: "Delete"
     },
     detailModal: {
       menuLabel: "Menu",
@@ -160,6 +164,8 @@ export const appCopy = {
       moveToGroup: "Move to group",
       joinGroup: "Join group",
       leaveCurrentGroup: "Leave current group",
+      deleteGroup: "Delete group",
+      deleteConfirm: "Delete this group? Its membership list will be removed too.",
       working: "Working...",
       archiveNotice: "Archived sessions are read-only. Change membership only in the current Sunday session."
     },

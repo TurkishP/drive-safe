@@ -13,6 +13,7 @@ type GroupDetail = {
   menu: string;
   linkUrl: string;
   imageUrl: string;
+  creatorId: string;
   creatorName: string;
   members: GroupMember[];
 };
@@ -24,7 +25,9 @@ type GroupDetailModalProps = {
   onClose: () => void;
   onJoin: (groupId: string) => Promise<void>;
   onLeave: () => Promise<void>;
+  onDelete: (groupId: string) => Promise<void>;
   canEdit: boolean;
+  canDelete: boolean;
   copy: {
     menuLabel: string;
     createdBy: string;
@@ -34,6 +37,8 @@ type GroupDetailModalProps = {
     moveToGroup: string;
     joinGroup: string;
     leaveCurrentGroup: string;
+    deleteGroup: string;
+    deleteConfirm: string;
     working: string;
     fallbackName: string;
     archiveNotice: string;
@@ -70,7 +75,9 @@ export default function GroupDetailModal({
   onClose,
   onJoin,
   onLeave,
+  onDelete,
   canEdit,
+  canDelete,
   copy,
   modalCopy
 }: GroupDetailModalProps) {
@@ -94,6 +101,10 @@ export default function GroupDetailModal({
     }
 
     await onJoin(groupId);
+  }
+
+  async function handleDelete() {
+    await onDelete(groupId);
   }
 
   return (
@@ -140,7 +151,7 @@ export default function GroupDetailModal({
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
               {copy.members}
             </p>
-            <p className="rounded-full bg-pine/10 px-3 py-1 text-sm font-semibold text-pine">
+            <p className="rounded-full bg-pine/10 px-4 py-2 text-lg font-semibold leading-none text-pine">
               {group.members.length}
             </p>
           </div>
@@ -182,6 +193,17 @@ export default function GroupDetailModal({
                 type="button"
               >
                 {copy.leaveCurrentGroup}
+              </button>
+            ) : null}
+
+            {canDelete ? (
+              <button
+                className="rounded-[1.4rem] border border-red-200 bg-red-50 px-4 py-4 text-base font-semibold text-red-700 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-60 sm:col-span-2"
+                disabled={isBusy}
+                onClick={handleDelete}
+                type="button"
+              >
+                {copy.deleteGroup}
               </button>
             ) : null}
           </div>

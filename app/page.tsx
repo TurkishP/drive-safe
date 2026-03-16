@@ -20,6 +20,7 @@ import {
 } from "@/lib/sessionDates";
 import {
   createGroup,
+  deleteGroup,
   subscribeGroups,
   type LunchGroup
 } from "@/lib/groups";
@@ -142,6 +143,7 @@ export default function HomePage() {
   const [shareOpen, setShareOpen] = useState(false);
   const [pendingAction, setPendingAction] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [deletingGroupId, setDeletingGroupId] = useState<string | null>(null);
 
   const viewedSessionId = selectedSessionId ?? currentSessionId;
   const isViewingCurrentSession =
@@ -278,7 +280,8 @@ export default function HomePage() {
     memberCount: group.memberCount,
     hasLink: Boolean(group.linkUrl),
     hasImage: Boolean(group.imageUrl),
-    isJoined: membershipGroupId === group.id
+    isJoined: membershipGroupId === group.id,
+    canDelete: isViewingCurrentSession && user?.uid === group.creatorId
   }));
 
   const selectedGroup =
@@ -375,6 +378,34 @@ export default function HomePage() {
     });
   }
 
+  async function handleDeleteGroup(groupId: string) {
+    if (!user || !currentSessionId || !isViewingCurrentSession) {
+      return;
+    }
+
+    if (!window.confirm(copy.detailModal.deleteConfirm)) {
+      return;
+    }
+
+    setDeletingGroupId(groupId);
+    setPendingAction("delete-group");
+    setActionError(null);
+
+    try {
+      await deleteGroup(currentSessionId, groupId);
+      setSelectedGroupId((currentGroupId) =>
+        currentGroupId === groupId ? null : currentGroupId
+      );
+    } catch (error) {
+      setActionError(
+        error instanceof Error ? error.message : "Something went wrong."
+      );
+    } finally {
+      setPendingAction(null);
+      setDeletingGroupId(null);
+    }
+  }
+
   const isInitialLoading =
     authLoading ||
     sessionLoading ||
@@ -403,7 +434,11 @@ export default function HomePage() {
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-pine/75">
                 {copy.communityLabel}
               </p>
-              <h1 className="display-font mt-2 text-4xl font-semibold leading-none text-pine">
+              <h1
+                className={`display-font mt-2 font-semibold leading-none text-pine ${
+                  language === "ko" ? "text-[2.4rem]" : "text-4xl"
+                }`}
+              >
                 {copy.appTitle}
               </h1>
             </div>
@@ -438,18 +473,20 @@ export default function HomePage() {
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
                 {copy.yourName}
               </p>
-              <p className="mt-2 text-lg font-semibold text-slate-800">
-                {currentParticipant?.displayName || copy.setDisplayName}
-              </p>
-              {currentSessionId && isViewingCurrentSession ? (
-                <button
-                  className="mt-3 inline-flex rounded-full border border-pine/15 bg-white px-3 py-2 text-sm font-semibold text-pine transition hover:bg-pine/5"
-                  onClick={() => setNameEditorOpen(true)}
-                  type="button"
-                >
-                  {copy.nameGate.edit}
-                </button>
-              ) : null}
+              <div className="mt-2 flex items-center justify-between gap-3">
+                <p className="min-w-0 text-lg font-semibold text-slate-800">
+                  {currentParticipant?.displayName || copy.setDisplayName}
+                </p>
+                {currentSessionId && isViewingCurrentSession ? (
+                  <button
+                    className="inline-flex shrink-0 rounded-full border border-pine/15 bg-white px-3 py-2 text-sm font-semibold text-pine transition hover:bg-pine/5"
+                    onClick={() => setNameEditorOpen(true)}
+                    type="button"
+                  >
+                    {copy.nameGate.edit}
+                  </button>
+                ) : null}
+              </div>
             </div>
 
             <div className="rounded-[1.5rem] bg-white/80 px-4 py-4">
@@ -495,14 +532,16 @@ export default function HomePage() {
             <h2 className="display-font text-2xl font-semibold text-ink">
               {copy.openGroups}
             </h2>
-            <span className="rounded-full bg-white/75 px-3 py-1 text-sm font-semibold text-pine">
+            <span className="rounded-full bg-white/75 px-4 py-2 text-lg font-semibold leading-none text-pine">
               {detailedGroups.length}
             </span>
           </div>
 
           <GroupList
             copy={copy.groupList}
+            deletingGroupId={deletingGroupId}
             groups={groupListItems}
+            onDelete={handleDeleteGroup}
             onSelect={setSelectedGroupId}
           />
         </section>
@@ -562,15 +601,26 @@ export default function HomePage() {
                 menu: selectedGroup.menu,
                 linkUrl: selectedGroup.linkUrl,
                 imageUrl: selectedGroup.imageUrl,
+                creatorId: selectedGroup.creatorId,
                 creatorName: selectedGroup.creatorName,
                 members: selectedGroup.members
               }
             : null
         }
-        isBusy={pendingAction === "join-group" || pendingAction === "leave-group"}
+        isBusy={
+          pendingAction === "join-group" ||
+          pendingAction === "leave-group" ||
+          pendingAction === "delete-group"
+        }
+        canDelete={
+          Boolean(selectedGroup) &&
+          isViewingCurrentSession &&
+          user?.uid === selectedGroup?.creatorId
+        }
         membershipGroupId={membershipGroupId}
         modalCopy={copy.modal}
         onClose={() => setSelectedGroupId(null)}
+        onDelete={handleDeleteGroup}
         onJoin={handleJoinGroup}
         onLeave={handleLeaveGroup}
       />
