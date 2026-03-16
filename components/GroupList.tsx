@@ -4,6 +4,7 @@ export type GroupListItem = {
   id: string;
   name: string;
   menu: string;
+  location: string;
   creatorName: string;
   memberCount: number;
   hasLink: boolean;
@@ -23,6 +24,7 @@ type GroupListProps = {
     fallbackName: string;
     myGroup: string;
     menu: string;
+    location: string;
     link: string;
     photo: string;
     delete: string;
@@ -102,7 +104,7 @@ export default function GroupList({
         <div
           className={`w-full rounded-[1.75rem] p-4 transition hover:-translate-y-0.5 ${
             group.isJoined
-              ? "panel-strong border-pine/25 bg-gradient-to-br from-pine/10 via-white/92 to-moss/10 hover:bg-white/95"
+              ? "panel-strong border-red-200 bg-gradient-to-br from-red-100/75 via-white/95 to-amber-100/70 hover:bg-white/95"
               : "panel hover:bg-white/90"
           }`}
           key={group.id}
@@ -123,6 +125,14 @@ export default function GroupList({
                 </span>
                 <span className="font-medium text-slate-800">{group.menu}</span>
               </p>
+              {group.location ? (
+                <p className="mt-1 flex items-baseline gap-2 text-base">
+                  <span className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">
+                    {copy.location}
+                  </span>
+                  <span className="font-medium text-slate-800">{group.location}</span>
+                </p>
+              ) : null}
             </button>
 
             <div className="flex flex-col items-end gap-2">

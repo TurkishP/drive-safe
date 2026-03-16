@@ -21,6 +21,7 @@ export type LunchGroup = {
   id: string;
   name: string;
   menu: string;
+  location: string;
   linkUrl: string;
   imageUrl: string;
   creatorId: string;
@@ -33,6 +34,7 @@ type CreateGroupInput = {
   creatorId: string;
   menu: string;
   name?: string;
+  location?: string;
   linkUrl?: string;
   imageFile?: File | null;
 };
@@ -57,6 +59,7 @@ export function subscribeGroups(
           id: groupDoc.id,
           name: data.name ?? "",
           menu: data.menu ?? "",
+          location: data.location ?? "",
           linkUrl: data.linkUrl ?? "",
           imageUrl: data.imageUrl ?? "",
           creatorId: data.creatorId ?? "",
@@ -78,6 +81,7 @@ export async function createGroup({
   creatorId,
   menu,
   name,
+  location,
   linkUrl,
   imageFile
 }: CreateGroupInput) {
@@ -100,6 +104,7 @@ export async function createGroup({
   batch.set(groupRef, {
     name: name?.trim() ?? "",
     menu: menu.trim(),
+    location: location?.trim() ?? "",
     linkUrl: linkUrl?.trim() ?? "",
     imageUrl,
     creatorId,
@@ -130,5 +135,18 @@ export async function deleteGroup(sessionId: string, groupId: string) {
   });
 
   batch.delete(doc(db, "sessions", sessionId, "groups", groupId));
+  await batch.commit();
+}
+
+export async function updateGroupLocation(
+  sessionId: string,
+  groupId: string,
+  location: string
+) {
+  const db = getFirebaseDb();
+  const batch = writeBatch(db);
+  batch.update(doc(db, "sessions", sessionId, "groups", groupId), {
+    location: location.trim()
+  });
   await batch.commit();
 }

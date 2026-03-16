@@ -6,6 +6,7 @@ import Modal from "@/components/Modal";
 type CreateGroupValues = {
   name: string;
   menu: string;
+  location: string;
   linkUrl: string;
   imageFile: File | null;
 };
@@ -21,6 +22,8 @@ type CreateGroupModalProps = {
     groupNamePlaceholder: string;
     menu: string;
     menuPlaceholder: string;
+    location: string;
+    locationPlaceholder: string;
     linkUrl: string;
     linkUrlPlaceholder: string;
     image: string;
@@ -45,6 +48,7 @@ export default function CreateGroupModal({
 }: CreateGroupModalProps) {
   const [name, setName] = useState("");
   const [menu, setMenu] = useState("");
+  const [location, setLocation] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
 
@@ -55,6 +59,7 @@ export default function CreateGroupModal({
 
     setName("");
     setMenu("");
+    setLocation("");
     setLinkUrl("");
     setImageFile(null);
   }, [isOpen]);
@@ -69,6 +74,7 @@ export default function CreateGroupModal({
     await onSubmit({
       name,
       menu,
+      location,
       linkUrl,
       imageFile
     });
@@ -101,6 +107,16 @@ export default function CreateGroupModal({
             placeholder={copy.menuPlaceholder}
             required
             value={menu}
+          />
+        </label>
+
+        <label className="block space-y-2">
+          <span className="text-sm font-semibold text-slate-700">{copy.location}</span>
+          <input
+            className="w-full rounded-2xl border border-pine/15 bg-white/90 px-4 py-3 outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/15"
+            onChange={(event) => setLocation(event.target.value)}
+            placeholder={copy.locationPlaceholder}
+            value={location}
           />
         </label>
 

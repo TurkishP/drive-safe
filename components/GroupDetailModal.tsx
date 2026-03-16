@@ -11,6 +11,7 @@ type GroupDetail = {
   id: string;
   name: string;
   menu: string;
+  location: string;
   linkUrl: string;
   imageUrl: string;
   creatorId: string;
@@ -26,10 +27,13 @@ type GroupDetailModalProps = {
   onJoin: (groupId: string) => Promise<void>;
   onLeave: () => Promise<void>;
   onDelete: (groupId: string) => Promise<void>;
+  onEditLocation: (groupId: string, currentLocation: string) => Promise<void>;
   canEdit: boolean;
   canDelete: boolean;
+  canEditLocation: boolean;
   copy: {
     menuLabel: string;
+    locationLabel: string;
     createdBy: string;
     members: string;
     memberCountPrefix: string;
@@ -40,6 +44,8 @@ type GroupDetailModalProps = {
     joinGroup: string;
     leaveCurrentGroup: string;
     deleteGroup: string;
+    editLocation: string;
+    addLocation: string;
     deleteConfirm: string;
     working: string;
     fallbackName: string;
@@ -78,8 +84,10 @@ export default function GroupDetailModal({
   onJoin,
   onLeave,
   onDelete,
+  onEditLocation,
   canEdit,
   canDelete,
+  canEditLocation,
   copy,
   modalCopy
 }: GroupDetailModalProps) {
@@ -88,6 +96,7 @@ export default function GroupDetailModal({
   }
 
   const groupId = group.id;
+  const groupLocation = group.location;
   const isCurrentGroup = membershipGroupId === groupId;
   const hasMembership = Boolean(membershipGroupId);
   const primaryLabel = isCurrentGroup
@@ -121,6 +130,10 @@ export default function GroupDetailModal({
     await onDelete(groupId);
   }
 
+  async function handleEditLocation() {
+    await onEditLocation(groupId, groupLocation);
+  }
+
   return (
     <Modal
       backdropLabel={modalCopy.closeBackdrop}
@@ -131,10 +144,20 @@ export default function GroupDetailModal({
     >
       <div className="space-y-5">
         <div className="rounded-[1.5rem] bg-gradient-to-br from-pine to-moss p-5 text-white">
-          <p className="text-sm uppercase tracking-[0.22em] text-white/75">
-            {copy.menuLabel}
+          <p className="mt-1 flex items-baseline gap-2 text-2xl font-semibold">
+            <span className="text-sm font-semibold uppercase tracking-[0.22em] text-white/75">
+              {copy.menuLabel}
+            </span>
+            <span>{group.menu}</span>
           </p>
-          <p className="mt-2 text-2xl font-semibold">{group.menu}</p>
+          {group.location ? (
+            <p className="mt-3 flex items-baseline gap-2 text-base text-white/90">
+              <span className="text-sm font-semibold uppercase tracking-[0.22em] text-white/75">
+                {copy.locationLabel}
+              </span>
+              <span>{group.location}</span>
+            </p>
+          ) : null}
           <p className="mt-3 text-sm text-white/80">
             {copy.createdBy} {group.creatorName}
           </p>
@@ -218,6 +241,17 @@ export default function GroupDetailModal({
                 type="button"
               >
                 {copy.deleteGroup}
+              </button>
+            ) : null}
+
+            {canEditLocation ? (
+              <button
+                className="rounded-[1.4rem] border border-pine/15 bg-white/80 px-4 py-4 text-base font-semibold text-pine transition hover:bg-pine/5 disabled:cursor-not-allowed disabled:opacity-60 sm:col-span-2"
+                disabled={isBusy}
+                onClick={handleEditLocation}
+                type="button"
+              >
+                {groupLocation ? copy.editLocation : copy.addLocation}
               </button>
             ) : null}
           </div>

@@ -22,6 +22,7 @@ import {
   createGroup,
   deleteGroup,
   subscribeGroups,
+  updateGroupLocation,
   type LunchGroup
 } from "@/lib/groups";
 import {
@@ -276,6 +277,7 @@ export default function HomePage() {
     id: group.id,
     name: group.name,
     menu: group.menu,
+    location: group.location,
     creatorName: group.creatorName,
     memberCount: group.memberCount,
     hasLink: Boolean(group.linkUrl),
@@ -356,6 +358,7 @@ export default function HomePage() {
   async function handleCreateGroup(values: {
     name: string;
     menu: string;
+    location: string;
     linkUrl: string;
     imageFile: File | null;
   }) {
@@ -369,6 +372,7 @@ export default function HomePage() {
         creatorId: user.uid,
         name: values.name,
         menu: values.menu,
+        location: values.location,
         linkUrl: values.linkUrl,
         imageFile: values.imageFile
       });
@@ -404,6 +408,25 @@ export default function HomePage() {
       setPendingAction(null);
       setDeletingGroupId(null);
     }
+  }
+
+  async function handleEditGroupLocation(groupId: string, currentLocation: string) {
+    if (!user || !currentSessionId || !isViewingCurrentSession) {
+      return;
+    }
+
+    const nextLocation = window.prompt(
+      copy.detailModal.locationPrompt,
+      currentLocation
+    );
+
+    if (nextLocation === null) {
+      return;
+    }
+
+    await runAction("edit-location", async () => {
+      await updateGroupLocation(currentSessionId, groupId, nextLocation);
+    });
   }
 
   const isInitialLoading =
@@ -596,6 +619,7 @@ export default function HomePage() {
                 id: selectedGroup.id,
                 name: selectedGroup.name,
                 menu: selectedGroup.menu,
+                location: selectedGroup.location,
                 linkUrl: selectedGroup.linkUrl,
                 imageUrl: selectedGroup.imageUrl,
                 creatorId: selectedGroup.creatorId,
@@ -607,9 +631,15 @@ export default function HomePage() {
         isBusy={
           pendingAction === "join-group" ||
           pendingAction === "leave-group" ||
-          pendingAction === "delete-group"
+          pendingAction === "delete-group" ||
+          pendingAction === "edit-location"
         }
         canDelete={
+          Boolean(selectedGroup) &&
+          isViewingCurrentSession &&
+          user?.uid === selectedGroup?.creatorId
+        }
+        canEditLocation={
           Boolean(selectedGroup) &&
           isViewingCurrentSession &&
           user?.uid === selectedGroup?.creatorId
@@ -618,6 +648,7 @@ export default function HomePage() {
         modalCopy={copy.modal}
         onClose={() => setSelectedGroupId(null)}
         onDelete={handleDeleteGroup}
+        onEditLocation={handleEditGroupLocation}
         onJoin={handleJoinGroup}
         onLeave={handleLeaveGroup}
       />
