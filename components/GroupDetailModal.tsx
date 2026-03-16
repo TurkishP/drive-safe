@@ -146,6 +146,7 @@ export default function GroupDetailModal({
       isOpen={Boolean(group)}
       onClose={onClose}
       title={group.name || copy.fallbackName}
+      titleClassName="text-[1.9rem] leading-tight sm:text-[2.35rem]"
     >
       <div className="space-y-5">
         <div className="rounded-[1.5rem] bg-gradient-to-br from-pine to-moss p-5 text-white">

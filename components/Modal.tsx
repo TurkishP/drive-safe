@@ -10,6 +10,7 @@ type ModalProps = {
   dismissible?: boolean;
   closeLabel?: string;
   backdropLabel?: string;
+  titleClassName?: string;
 };
 
 export default function Modal({
@@ -19,7 +20,8 @@ export default function Modal({
   onClose,
   dismissible = true,
   closeLabel = "Close",
-  backdropLabel = "Close modal backdrop"
+  backdropLabel = "Close modal backdrop",
+  titleClassName
 }: ModalProps) {
   useEffect(() => {
     if (!isOpen) {
@@ -54,7 +56,7 @@ export default function Modal({
 
       <div className="panel-strong relative z-10 flex max-h-[88vh] w-full max-w-lg flex-col overflow-hidden rounded-[2rem]">
         <div className="flex items-center justify-between border-b border-pine/10 px-5 py-4">
-          <h2 className="display-font text-2xl font-semibold text-pine">
+          <h2 className={`display-font min-w-0 pr-3 font-semibold text-pine ${titleClassName ?? "text-2xl"}`}>
             {title}
           </h2>
 
