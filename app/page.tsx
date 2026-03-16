@@ -5,11 +5,19 @@ import CreateGroupModal from "@/components/CreateGroupModal";
 import GroupDetailModal from "@/components/GroupDetailModal";
 import GroupList, { type GroupListItem } from "@/components/GroupList";
 import NameGate from "@/components/NameGate";
+import SessionCalendar from "@/components/SessionCalendar";
 import ShareQrModal from "@/components/ShareQrModal";
 import { useAnonAuth } from "@/hooks/useAnonAuth";
 import { useCurrentSession } from "@/hooks/useCurrentSession";
 import { useLanguage } from "@/hooks/useLanguage";
 import { getCopy } from "@/lib/i18n";
+import {
+  formatSessionId,
+  formatShortSessionId,
+  getMonthValueFromSessionId,
+  getSundaySessionIdsForMonth,
+  getTodayMonthValue
+} from "@/lib/sessionDates";
 import {
   createGroup,
   subscribeGroups,
@@ -113,7 +121,7 @@ export default function HomePage() {
   const copy = getCopy(language);
   const { user, loading: authLoading, error: authError } = useAnonAuth();
   const {
-    sessionId,
+    sessionId: currentSessionId,
     loading: sessionLoading,
     error: sessionError
   } = useCurrentSession();
@@ -127,14 +135,33 @@ export default function HomePage() {
   const [groupsLoaded, setGroupsLoaded] = useState(false);
   const [membershipsLoaded, setMembershipsLoaded] = useState(false);
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
+  const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
+  const [selectedMonth, setSelectedMonth] = useState(getTodayMonthValue());
   const [createOpen, setCreateOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [pendingAction, setPendingAction] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
-  const canCreateGroup = Boolean(sessionId) && !authError && !sessionError;
+
+  const viewedSessionId = selectedSessionId ?? currentSessionId;
+  const isViewingCurrentSession =
+    Boolean(currentSessionId) && viewedSessionId === currentSessionId;
+  const canCreateGroup =
+    Boolean(currentSessionId) &&
+    isViewingCurrentSession &&
+    !authError &&
+    !sessionError;
 
   useEffect(() => {
-    if (!sessionId) {
+    if (!currentSessionId || selectedSessionId) {
+      return;
+    }
+
+    setSelectedSessionId(currentSessionId);
+    setSelectedMonth(getMonthValueFromSessionId(currentSessionId));
+  }, [currentSessionId, selectedSessionId]);
+
+  useEffect(() => {
+    if (!viewedSessionId) {
       setParticipants({});
       setGroups({});
       setMemberships({});
@@ -144,12 +171,14 @@ export default function HomePage() {
       return;
     }
 
+    setSelectedGroupId(null);
+    setActionError(null);
     setParticipantsLoaded(false);
     setGroupsLoaded(false);
     setMembershipsLoaded(false);
 
     const unsubscribeParticipants = subscribeParticipants(
-      sessionId,
+      viewedSessionId,
       (nextParticipants) => {
         setParticipants(nextParticipants);
         setParticipantsLoaded(true);
@@ -161,7 +190,7 @@ export default function HomePage() {
     );
 
     const unsubscribeGroups = subscribeGroups(
-      sessionId,
+      viewedSessionId,
       (nextGroups) => {
         setGroups(nextGroups);
         setGroupsLoaded(true);
@@ -173,7 +202,7 @@ export default function HomePage() {
     );
 
     const unsubscribeMemberships = subscribeMemberships(
-      sessionId,
+      viewedSessionId,
       (nextMemberships) => {
         setMemberships(nextMemberships);
         setMembershipsLoaded(true);
@@ -189,7 +218,7 @@ export default function HomePage() {
       unsubscribeGroups();
       unsubscribeMemberships();
     };
-  }, [sessionId]);
+  }, [viewedSessionId]);
 
   const currentParticipant = user ? participants[user.uid] ?? null : null;
   const currentMembership = user ? memberships[user.uid] ?? null : null;
@@ -246,6 +275,25 @@ export default function HomePage() {
 
   const selectedGroup =
     detailedGroups.find((group) => group.id === selectedGroupId) ?? null;
+  const sessionIdsForMonth = getSundaySessionIdsForMonth(selectedMonth);
+
+  function handleMonthChange(monthValue: string) {
+    setSelectedMonth(monthValue);
+
+    const monthSessionIds = getSundaySessionIdsForMonth(monthValue);
+
+    if (monthSessionIds.length === 0) {
+      setSelectedSessionId(null);
+      return;
+    }
+
+    if (currentSessionId && getMonthValueFromSessionId(currentSessionId) === monthValue) {
+      setSelectedSessionId(currentSessionId);
+      return;
+    }
+
+    setSelectedSessionId(monthSessionIds[0]);
+  }
 
   async function runAction(actionName: string, action: () => Promise<void>) {
     setPendingAction(actionName);
@@ -263,32 +311,32 @@ export default function HomePage() {
   }
 
   async function handleSaveDisplayName(displayName: string) {
-    if (!user || !sessionId) {
+    if (!user || !currentSessionId || !isViewingCurrentSession) {
       return;
     }
 
     await runAction("save-name", async () => {
-      await saveParticipantDisplayName(sessionId, user.uid, displayName);
+      await saveParticipantDisplayName(currentSessionId, user.uid, displayName);
     });
   }
 
   async function handleJoinGroup(groupId: string) {
-    if (!user || !sessionId) {
+    if (!user || !currentSessionId || !isViewingCurrentSession) {
       return;
     }
 
     await runAction("join-group", async () => {
-      await upsertMembership(sessionId, user.uid, groupId);
+      await upsertMembership(currentSessionId, user.uid, groupId);
     });
   }
 
   async function handleLeaveGroup() {
-    if (!user || !sessionId) {
+    if (!user || !currentSessionId || !isViewingCurrentSession) {
       return;
     }
 
     await runAction("leave-group", async () => {
-      await leaveGroup(sessionId, user.uid);
+      await leaveGroup(currentSessionId, user.uid);
       setSelectedGroupId(null);
     });
   }
@@ -299,13 +347,13 @@ export default function HomePage() {
     linkUrl: string;
     imageFile: File | null;
   }) {
-    if (!user || !sessionId) {
+    if (!user || !currentSessionId || !isViewingCurrentSession) {
       return;
     }
 
     await runAction("create-group", async () => {
       const newGroupId = await createGroup({
-        sessionId,
+        sessionId: currentSessionId,
         creatorId: user.uid,
         name: values.name,
         menu: values.menu,
@@ -321,7 +369,7 @@ export default function HomePage() {
   const isInitialLoading =
     authLoading ||
     sessionLoading ||
-    (Boolean(sessionId) &&
+    (Boolean(viewedSessionId) &&
       (!participantsLoaded || !groupsLoaded || !membershipsLoaded));
 
   if (isInitialLoading) {
@@ -388,22 +436,22 @@ export default function HomePage() {
 
             <div className="rounded-[1.5rem] bg-white/80 px-4 py-4">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-                {copy.currentSession}
+                {copy.dateLabel}
               </p>
               <p className="mt-2 text-lg font-semibold text-slate-800">
-                {sessionId ?? copy.notConfigured}
+                {viewedSessionId
+                  ? formatSessionId(viewedSessionId, language)
+                  : copy.notConfigured}
               </p>
             </div>
           </div>
 
           <div className="mt-4 rounded-[1.5rem] bg-gradient-to-r from-ember/15 to-moss/15 px-4 py-4 text-sm text-slate-700">
-            {membershipGroupId
-              ? copy.joinedHint
-              : copy.noMembershipHint}
+            {membershipGroupId ? copy.joinedHint : copy.noMembershipHint}
           </div>
         </section>
 
-        {authError || sessionError || actionError || !sessionId ? (
+        {authError || sessionError || actionError || !currentSessionId ? (
           <section className="rounded-[1.75rem] border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-700">
             {authError ||
               sessionError ||
@@ -411,6 +459,18 @@ export default function HomePage() {
               copy.noActiveSession}
           </section>
         ) : null}
+
+        <SessionCalendar
+          activeSessionId={currentSessionId}
+          copy={copy.sessionBrowser}
+          formatSessionDate={(sessionId) => formatSessionId(sessionId, language)}
+          formatShortSessionDate={formatShortSessionId}
+          monthValue={selectedMonth}
+          onMonthChange={handleMonthChange}
+          onSessionSelect={setSelectedSessionId}
+          selectedSessionId={viewedSessionId}
+          sessionIds={sessionIdsForMonth}
+        />
 
         <section className="space-y-3">
           <div className="flex items-center justify-between px-1">
@@ -422,7 +482,11 @@ export default function HomePage() {
             </span>
           </div>
 
-          <GroupList copy={copy.groupList} groups={groupListItems} onSelect={setSelectedGroupId} />
+          <GroupList
+            copy={copy.groupList}
+            groups={groupListItems}
+            onSelect={setSelectedGroupId}
+          />
         </section>
       </div>
 
@@ -452,7 +516,12 @@ export default function HomePage() {
       <NameGate
         copy={copy.nameGate}
         initialValue={currentParticipant?.displayName ?? ""}
-        isOpen={Boolean(user && sessionId && !currentParticipant?.displayName)}
+        isOpen={Boolean(
+          user &&
+            currentSessionId &&
+            isViewingCurrentSession &&
+            !currentParticipant?.displayName
+        )}
         isSaving={pendingAction === "save-name"}
         modalCopy={copy.modal}
         onSubmit={handleSaveDisplayName}
@@ -468,6 +537,7 @@ export default function HomePage() {
       />
 
       <GroupDetailModal
+        canEdit={isViewingCurrentSession}
         copy={{ ...copy.detailModal, fallbackName: copy.groupList.fallbackName }}
         group={
           selectedGroup

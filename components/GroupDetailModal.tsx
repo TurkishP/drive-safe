@@ -24,6 +24,7 @@ type GroupDetailModalProps = {
   onClose: () => void;
   onJoin: (groupId: string) => Promise<void>;
   onLeave: () => Promise<void>;
+  canEdit: boolean;
   copy: {
     menuLabel: string;
     createdBy: string;
@@ -35,6 +36,7 @@ type GroupDetailModalProps = {
     leaveCurrentGroup: string;
     working: string;
     fallbackName: string;
+    archiveNotice: string;
   };
   modalCopy: {
     close: string;
@@ -68,6 +70,7 @@ export default function GroupDetailModal({
   onClose,
   onJoin,
   onLeave,
+  canEdit,
   copy,
   modalCopy
 }: GroupDetailModalProps) {
@@ -160,27 +163,33 @@ export default function GroupDetailModal({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <button
-            className="rounded-[1.4rem] bg-pine px-4 py-4 text-base font-semibold text-white transition hover:bg-pine/90 disabled:cursor-not-allowed disabled:bg-pine/50"
-            disabled={isBusy}
-            onClick={handlePrimaryAction}
-            type="button"
-          >
-            {isBusy ? copy.working : primaryLabel}
-          </button>
-
-          {!isCurrentGroup && membershipGroupId ? (
+        {canEdit ? (
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <button
-              className="rounded-[1.4rem] border border-pine/15 bg-white/80 px-4 py-4 text-base font-semibold text-pine transition hover:bg-pine/5 disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-[1.4rem] bg-pine px-4 py-4 text-base font-semibold text-white transition hover:bg-pine/90 disabled:cursor-not-allowed disabled:bg-pine/50"
               disabled={isBusy}
-              onClick={onLeave}
+              onClick={handlePrimaryAction}
               type="button"
             >
-              {copy.leaveCurrentGroup}
+              {isBusy ? copy.working : primaryLabel}
             </button>
-          ) : null}
-        </div>
+
+            {!isCurrentGroup && membershipGroupId ? (
+              <button
+                className="rounded-[1.4rem] border border-pine/15 bg-white/80 px-4 py-4 text-base font-semibold text-pine transition hover:bg-pine/5 disabled:cursor-not-allowed disabled:opacity-60"
+                disabled={isBusy}
+                onClick={onLeave}
+                type="button"
+              >
+                {copy.leaveCurrentGroup}
+              </button>
+            ) : null}
+          </div>
+        ) : (
+          <div className="rounded-[1.4rem] bg-sand/70 px-4 py-4 text-sm leading-6 text-slate-600">
+            {copy.archiveNotice}
+          </div>
+        )}
       </div>
     </Modal>
   );
