@@ -22,11 +22,12 @@ type GroupListProps = {
     emptyDescription: string;
     fallbackName: string;
     myGroup: string;
-    createdBy: string;
     menu: string;
     link: string;
     photo: string;
     delete: string;
+    memberCountPrefix: string;
+    memberCountSuffix: string;
   };
 };
 
@@ -74,6 +75,18 @@ export default function GroupList({
   deletingGroupId,
   copy
 }: GroupListProps) {
+  function formatMemberCount(memberCount: number) {
+    if (copy.memberCountPrefix) {
+      return `${copy.memberCountPrefix} ${memberCount}`;
+    }
+
+    if (copy.memberCountSuffix) {
+      return `${memberCount} ${copy.memberCountSuffix}`;
+    }
+
+    return `${memberCount}`;
+  }
+
   if (groups.length === 0) {
     return (
       <div className="panel rounded-[1.75rem] p-6 text-center">
@@ -96,16 +109,9 @@ export default function GroupList({
               onClick={() => onSelect(group.id)}
               type="button"
             >
-              <div className="flex flex-wrap items-center gap-2">
-                <h3 className="display-font truncate text-2xl font-semibold text-ink">
-                  {group.name || copy.fallbackName}
-                </h3>
-                {group.isJoined ? (
-                  <span className="rounded-full bg-pine/10 px-2.5 py-1 text-xs font-semibold text-pine">
-                    {copy.myGroup}
-                  </span>
-                ) : null}
-              </div>
+              <h3 className="display-font truncate text-2xl font-semibold text-ink">
+                {group.name || copy.fallbackName}
+              </h3>
 
               <p className="mt-2 flex items-baseline gap-2 text-base">
                 <span className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">
@@ -113,15 +119,18 @@ export default function GroupList({
                 </span>
                 <span className="font-medium text-slate-800">{group.menu}</span>
               </p>
-              <p className="mt-2 text-sm text-slate-600">
-                {copy.createdBy} {group.creatorName}
-              </p>
             </button>
 
             <div className="flex flex-col items-end gap-2">
-              <div className="rounded-full bg-white/80 px-4 py-2 text-lg font-semibold leading-none text-pine">
-                {group.memberCount}
+              <div className="rounded-full bg-white/80 px-4 py-2 text-base font-semibold text-pine">
+                {formatMemberCount(group.memberCount)}
               </div>
+
+              {group.isJoined ? (
+                <span className="rounded-full bg-pine/10 px-2.5 py-1 text-xs font-semibold text-pine">
+                  {copy.myGroup}
+                </span>
+              ) : null}
 
               {group.canDelete ? (
                 <button

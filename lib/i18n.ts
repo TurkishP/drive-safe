@@ -59,16 +59,19 @@ export const appCopy = {
       emptyDescription: "이 날짜에 등록된 점심 모임이 없습니다.",
       fallbackName: "점심 모임",
       myGroup: "내 모임",
-      createdBy: "만든 사람",
       menu: "메뉴",
       link: "링크",
       photo: "사진",
-      delete: "삭제"
+      delete: "삭제",
+      memberCountPrefix: "멤버",
+      memberCountSuffix: ""
     },
     detailModal: {
       menuLabel: "메뉴",
       createdBy: "만든 사람",
       members: "참여자",
+      memberCountPrefix: "멤버",
+      memberCountSuffix: "",
       noMembers: "아직 참여한 사람이 없습니다.",
       leaveGroup: "모임 나가기",
       moveToGroup: "이 모임으로 이동",
@@ -151,16 +154,19 @@ export const appCopy = {
       emptyDescription: "There are no lunch groups saved for this date.",
       fallbackName: "Lunch Group",
       myGroup: "My group",
-      createdBy: "Created by",
       menu: "Menu",
       link: "Link",
       photo: "Photo",
-      delete: "Delete"
+      delete: "Delete",
+      memberCountPrefix: "",
+      memberCountSuffix: "members"
     },
     detailModal: {
       menuLabel: "Menu",
       createdBy: "Created by",
       members: "Members",
+      memberCountPrefix: "",
+      memberCountSuffix: "members",
       noMembers: "No one has joined yet.",
       leaveGroup: "Leave group",
       moveToGroup: "Move to group",

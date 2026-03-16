@@ -32,6 +32,8 @@ type GroupDetailModalProps = {
     menuLabel: string;
     createdBy: string;
     members: string;
+    memberCountPrefix: string;
+    memberCountSuffix: string;
     noMembers: string;
     leaveGroup: string;
     moveToGroup: string;
@@ -94,6 +96,18 @@ export default function GroupDetailModal({
       ? copy.moveToGroup
       : copy.joinGroup;
 
+  function formatMemberCount(memberCount: number) {
+    if (copy.memberCountPrefix) {
+      return `${copy.memberCountPrefix} ${memberCount}`;
+    }
+
+    if (copy.memberCountSuffix) {
+      return `${memberCount} ${copy.memberCountSuffix}`;
+    }
+
+    return `${memberCount}`;
+  }
+
   async function handlePrimaryAction() {
     if (isCurrentGroup) {
       await onLeave();
@@ -151,8 +165,8 @@ export default function GroupDetailModal({
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
               {copy.members}
             </p>
-            <p className="rounded-full bg-pine/10 px-4 py-2 text-lg font-semibold leading-none text-pine">
-              {group.members.length}
+            <p className="rounded-full bg-pine/10 px-4 py-2 text-base font-semibold text-pine">
+              {formatMemberCount(group.members.length)}
             </p>
           </div>
 
