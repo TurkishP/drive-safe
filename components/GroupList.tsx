@@ -107,11 +107,11 @@ export default function GroupList({
                 ) : null}
               </div>
 
-              <p className="mt-2 text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">
-                {copy.menu}
-              </p>
-              <p className="mt-1 text-base font-medium text-slate-800">
-                {group.menu}
+              <p className="mt-2 flex items-baseline gap-2 text-base">
+                <span className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">
+                  {copy.menu}
+                </span>
+                <span className="font-medium text-slate-800">{group.menu}</span>
               </p>
               <p className="mt-2 text-sm text-slate-600">
                 {copy.createdBy} {group.creatorName}
