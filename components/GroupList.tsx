@@ -23,6 +23,7 @@ type GroupListProps = {
     fallbackName: string;
     myGroup: string;
     createdBy: string;
+    menu: string;
     link: string;
     photo: string;
     delete: string;
@@ -106,7 +107,10 @@ export default function GroupList({
                 ) : null}
               </div>
 
-              <p className="mt-2 text-base font-medium text-slate-800">
+              <p className="mt-2 text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">
+                {copy.menu}
+              </p>
+              <p className="mt-1 text-base font-medium text-slate-800">
                 {group.menu}
               </p>
               <p className="mt-2 text-sm text-slate-600">

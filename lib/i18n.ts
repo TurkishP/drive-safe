@@ -60,6 +60,7 @@ export const appCopy = {
       fallbackName: "점심 모임",
       myGroup: "내 모임",
       createdBy: "만든 사람",
+      menu: "메뉴",
       link: "링크",
       photo: "사진",
       delete: "삭제"
@@ -151,6 +152,7 @@ export const appCopy = {
       fallbackName: "Lunch Group",
       myGroup: "My group",
       createdBy: "Created by",
+      menu: "Menu",
       link: "Link",
       photo: "Photo",
       delete: "Delete"

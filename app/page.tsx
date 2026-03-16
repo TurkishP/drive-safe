@@ -436,7 +436,7 @@ export default function HomePage() {
               </p>
               <h1
                 className={`display-font mt-2 font-semibold leading-none text-pine ${
-                  language === "ko" ? "text-[2.15rem]" : "text-4xl"
+                  language === "ko" ? "text-[1.85rem] sm:text-[2rem]" : "text-4xl"
                 }`}
               >
                 {copy.appTitle}
@@ -528,13 +528,10 @@ export default function HomePage() {
         />
 
         <section className="space-y-3">
-          <div className="flex items-center justify-between px-1">
+          <div className="px-1">
             <h2 className="display-font text-2xl font-semibold text-ink">
               {copy.openGroups}
             </h2>
-            <span className="rounded-full bg-white/75 px-4 py-2 text-lg font-semibold leading-none text-pine">
-              {detailedGroups.length}
-            </span>
           </div>
 
           <GroupList
