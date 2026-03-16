@@ -54,15 +54,12 @@ export default function SessionCalendar({
         type="button"
       >
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-            {isOpen ? copy.hide : copy.show}
-          </p>
-          <h2 className="display-font mt-2 text-2xl font-semibold text-ink">
+          <h2 className="display-font text-2xl font-semibold text-ink">
             {copy.title}
           </h2>
         </div>
 
-        <span className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-pine/15 bg-white/90 text-pine">
+        <span className="inline-flex items-center gap-2 rounded-full border border-pine/15 bg-white/90 px-4 py-3 text-sm font-semibold text-pine">
           <svg
             aria-hidden="true"
             className={`h-5 w-5 transition-transform ${isOpen ? "rotate-180" : ""}`}
@@ -75,6 +72,7 @@ export default function SessionCalendar({
           >
             <path d="m6 9 6 6 6-6" />
           </svg>
+          <span>{isOpen ? copy.hide : copy.show}</span>
         </span>
       </button>
 

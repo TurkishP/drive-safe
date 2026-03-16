@@ -83,7 +83,7 @@ textarea {
 }
 
 html:lang(ko) .display-font {
-  font-family: var(--font-display-ko), var(--font-display-en);
+  font-family: var(--font-body-ko), var(--font-body-en);
   letter-spacing: -0.02em;
 }
 
