@@ -49,6 +49,11 @@ struct DashcamView: View {
             }
 
             HStack(spacing: 12) {
+                statusBadge(title: "\(environment.coordinator.latestPerceptionSnapshot?.trackedVehicles.count ?? 0)", value: "Vehicles")
+                statusBadge(title: "\(environment.coordinator.latestPerceptionSnapshot?.lanes.count ?? 0)", value: "Lanes")
+            }
+
+            HStack(spacing: 12) {
                 TimelineView(.periodic(from: .now, by: 1)) { context in
                     statusBadge(title: context.date.formatted(date: .omitted, time: .standard), value: "Current Time")
                 }
@@ -57,10 +62,17 @@ struct DashcamView: View {
                 statusBadge(title: "\(environment.coordinator.pendingExports)", value: "Pending Saves")
             }
 
-            Text(environment.coordinator.lastStatusMessage)
-                .font(.footnote)
-                .foregroundStyle(.white.opacity(0.8))
-                .frame(maxWidth: .infinity, alignment: .leading)
+            VStack(alignment: .leading, spacing: 6) {
+                Text(environment.coordinator.lastStatusMessage)
+                    .font(.footnote)
+                    .foregroundStyle(.white.opacity(0.8))
+                if let snapshot = environment.coordinator.latestPerceptionSnapshot {
+                    Text(snapshot.debugSummary)
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.7))
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 

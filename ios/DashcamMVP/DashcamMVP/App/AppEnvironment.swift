@@ -10,7 +10,7 @@ final class AppEnvironment: ObservableObject {
         let eventStore = EventStore()
         let rollingBufferManager = RollingBufferManager()
         let cameraManager = CameraManager()
-        let detector = MockEventDetector()
+        let detector = BasicPerceptionDetector()
         let clipSaver = ClipSaver(rollingBufferManager: rollingBufferManager, eventStore: eventStore)
 
         self.settingsStore = settingsStore

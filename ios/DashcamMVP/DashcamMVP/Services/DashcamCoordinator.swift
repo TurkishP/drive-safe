@@ -6,6 +6,7 @@ final class DashcamCoordinator: ObservableObject {
     @Published private(set) var lastStatusMessage = "Ready"
     @Published private(set) var totalStorageBytes: Int64 = 0
     @Published private(set) var pendingExports = 0
+    @Published private(set) var latestPerceptionSnapshot: PerceptionSnapshot?
 
     let cameraManager: CameraManager
     let settingsStore: AppSettingsStore
@@ -31,6 +32,12 @@ final class DashcamCoordinator: ObservableObject {
         self.rollingBufferManager = rollingBufferManager
         self.detector = detector
         self.clipSaver = clipSaver
+
+        detector.onPerceptionUpdate = { [weak self] snapshot in
+            DispatchQueue.main.async {
+                self?.latestPerceptionSnapshot = snapshot
+            }
+        }
 
         wireCameraCallbacks()
         refreshStorageUsage()
@@ -98,7 +105,6 @@ final class DashcamCoordinator: ObservableObject {
                 guard let self else { return }
                 let sensitivity = self.settingsStore.settings.sensitivity
 
-                // TODO: Feed Vision / Core ML outputs into the rules engine instead of raw mock timing.
                 guard let suspectedEvent = self.detector.process(sampleBuffer: sampleBuffer, timestamp: timestamp, sensitivity: sensitivity) else {
                     return
                 }
